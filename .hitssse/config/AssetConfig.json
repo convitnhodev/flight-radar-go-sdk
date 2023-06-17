@@ -1,0 +1,381 @@
+[
+  {
+    "category" : "Patientendaten",
+    "description" : "",
+    "children" : [
+      {
+        "category" : "Login-Daten",
+        "description" : "",
+        "children" : [
+          {
+            "category" : "Studiennummer",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Passwort",
+            "description" : "",
+            "children" : [
+              {
+                "category" : "Klartext Passwort",
+                "description" : "",
+                "children" : []
+              },
+              {
+                "category" : "Passwort Hash",
+                "description" : "",
+                "children" : []
+              }
+            ]
+          },
+          {
+            "category" : "Unlock Key",
+            "description" : "",
+            "children" : []
+          }
+        ]
+      },
+      {
+        "category" : "Persoenliche Daten",
+        "description" : "",
+        "children" : [
+          {
+            "category" : "Name",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Geburtsdatum",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Geschlecht",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Adresse",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Telefon",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Datum des Studieneintritts",
+            "description" : "",
+            "children" : []
+          }
+        ]
+      },
+      {
+        "category" : "Einstellungen",
+        "description" : "Privatsphereeinstellungen des Patienten",
+        "children" : [
+          {
+            "category" : "Aktivitaetenverfolgung durch Mitarbeiter",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Einsehbarkeit der Werte",
+            "description" : "",
+            "children" : []
+          }
+        ]
+      },
+      {
+        "category" : "Aktivitaeten",
+        "description" : "Atkivitaeten die durch den Patienten ausgeuebt werden",
+        "children" : []
+      },
+      {
+        "category" : "Medizinische Daten",
+        "description" : "",
+        "children" : [
+          {
+            "category" : "Medikamente",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Immunsuppresiva",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Temperatur",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Gewicht",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Blutdruck",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Wohlbefinden",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Symptome",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Einweisungsstatus",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Patient durch CC gecheckt",
+            "description" : "",
+            "children" : []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category" : "Daten der Care-Coordinator (CC)",
+    "description" : "",
+    "children" : [
+      {
+        "category" : "Login-Daten",
+        "description" : "",
+        "children" : [
+          {
+            "category" : "Username",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Passwort",
+            "description" : "",
+            "children" : [
+              {
+                "category" : "Klartext Passwort",
+                "description" : "",
+                "children" : []
+              },
+              {
+                "category" : "Passwort Hash",
+                "description" : "",
+                "children" : []
+              }
+            ]
+          }
+
+        ]
+      },
+      {
+        "category" : "Registrierungsschluessel",
+        "description" : "",
+        "children" : []
+      },
+      {
+        "category" : "Aktivitaet",
+        "description" : "Atkivitaeten die durch den CC ausgeuebt werden",
+        "children" : []
+      },
+      {
+        "category" : "Kontaktdaten",
+        "description" : "",
+        "children" : [
+          {
+            "category" : "Telefon",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Verfuegbarkeit",
+            "description" : "Terminplanung des CC",
+            "children" : []
+          },
+          {
+            "category" : "Email",
+            "description" : "",
+            "children" : []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "category" : "Hardware",
+    "description" : "Physikalische Aspekte von SMILe",
+    "children" : [
+      {
+        "category" : "Server",
+        "description" : "",
+        "children" : []
+      },
+      {
+        "category" : "Netzwerk Infrastruktur",
+        "description" : "",
+        "children" : []
+      },
+      {
+        "category" : "Geraete der CC",
+        "description" : "",
+        "children" : []
+      }
+    ]
+  },
+  {
+    "category" : "Software",
+    "description" : "",
+    "children" : [
+      {
+        "category" : "SMILe App",
+        "description" : "Kompilierte App",
+        "children" : [
+          {
+            "category" : "QR-Code fuer SMILe App",
+            "description" : "",
+            "children" : []
+          }
+        ]
+      },
+      {
+        "category" : "Algorithmen",
+        "description" : "Algorithmen mit besonderem Wert fuer das Projekt",
+        "children" : []
+      },
+      {
+        "category" : "Logs",
+        "description" : "",
+        "children" : []
+      },
+      {
+        "category" : "Zugangsdaten",
+        "description" : "",
+        "children" : [
+          {
+            "category" : "Key fuer App Store",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "SSH Zugang",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Token",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "DB",
+            "description" : "",
+            "children" : [
+              {
+                "category" : "DB Nutzer",
+                "description" : "",
+                "children" : []
+              },
+              {
+                "category" : "DB Passwort",
+                "description" : "",
+                "children" : []
+              }
+            ]
+          },
+          {
+            "category" : "Email",
+            "description" : "",
+            "children" : [
+              {
+                "category" : "Email Nutzer",
+                "description" : "",
+                "children" : []
+              },
+              {
+                "category" : "Email Passwort",
+                "description" : "",
+                "children" : []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "category" : "Kryptographie",
+        "description" : "",
+        "children" : [
+          {
+            "category" : "Salt",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Initialisierungsvektor (iv)",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Secret",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Key",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Zertifikat",
+            "description" : "",
+            "children" : []
+          }
+        ]
+      },
+      {
+        "category" : "Informationen an Nutzer",
+        "description" : "Informationen die dem Nutzer direkt angezeigt werden",
+        "children" : [
+          {
+            "category" : "Pop-Up-Meldung (Toast)",
+            "description" : "",
+            "children" : []
+          },
+          {
+            "category" : "Lexikon",
+            "description" : "",
+            "children" : []
+          }
+        ]
+      },
+      {
+        "category" : "Dokumentation",
+        "description" : "",
+        "children" : []
+      }
+    ]
+  },
+  {
+    "category" : "Qualitative Assets",
+    "description" : "",
+    "children" : [
+      {
+        "category" : "App Lauffaehigkeit",
+        "description" : "",
+        "children" : []
+      }
+    ]
+  }
+]
+
+
+
+
