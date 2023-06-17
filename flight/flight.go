@@ -159,9 +159,9 @@ func (f *Flight) GetFlightID() string {
 	return f.id
 }
 
-//func main() {
-//	info := []interface{}{"ABC123", "ICAO123", "51.5074", "-0.1278", "123", "250", "1234", "XYZ", "123", "2023-06-17", "LHR", "JFK", "ABC123", "AA", "0", "100", "CSN", "ICAO123", "5", "US", []interface{}{}, []interface{}{}, "Boeing 747", "American Airlines", "AA", "100", "US", "UK", "51.5074", "-0.1278", "ICAO123", "N/A", "N/A", "London Heathrow Airport", "Terminal 2", "1", "https://www.heathrow.com/", "BST", "British Summer Time", "Europe/London", "1", "0", "1234", "US", "United States", "40.7128", "-74.0060", "ICAO456", "N/A", "N/A", "John F. Kennedy International Airport", "Terminal 4", "1", "https://www.jfkairport.com/", "EDT", "Eastern Daylight Time", "America/New_York", "-4", "-4", "✈️", "Scheduled", map[string]interface{}{}, []interface{}{}}
-//
-//	flight := NewFlight("123456", info)
-//	fmt.Println(flight)
-//}
+// func main() {
+// 	info := []interface{}{"ABC123", "ICAO123", "51.5074", "-0.1278", "123", "250", "1234", "XYZ", "123", "2023-06-17", "LHR", "JFK", "ABC123", "AA", "0", "100", "CSN", "ICAO123", "5", "US", []interface{}{}, []interface{}{}, "Boeing 747", "American Airlines", "AA", "100", "US", "UK", "51.5074", "-0.1278", "ICAO123", "N/A", "N/A", "London Heathrow Airport", "Terminal 2", "1", "https://www.heathrow.com/", "BST", "British Summer Time", "Europe/London", "1", "0", "1234", "US", "United States", "40.7128", "-74.0060", "ICAO456", "N/A", "N/A", "John F. Kennedy International Airport", "Terminal 4", "1", "https://www.jfkairport.com/", "EDT", "Eastern Daylight Time", "America/New_York", "-4", "-4", "✈️", "Scheduled", map[string]interface{}{}, []interface{}{}}
+
+// 	flight := NewFlight("123456", info)
+// 	fmt.Println(flight)
+// }
