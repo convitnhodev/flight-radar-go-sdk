@@ -1,9 +1,10 @@
-package request_
+package request
 
 import (
 	"bytes"
 	"compress/gzip"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -17,15 +18,6 @@ type APIRequest struct {
 	headers  http.Header
 	data     []byte
 	response *http.Response
-}
-
-func NewAPIRequest(url string, params url.Values, headers http.Header, data []byte) *APIRequest {
-	return &APIRequest{
-		url:     url,
-		params:  params,
-		headers: headers,
-		data:    data,
-	}
 }
 
 func (r *APIRequest) sendRequest() error {
@@ -53,6 +45,19 @@ func (r *APIRequest) sendRequest() error {
 	client := &http.Client{}
 	r.response, err = client.Do(req)
 	return err
+}
+
+func NewAPIRequest(url string, params url.Values, headers http.Header, data []byte) (*APIRequest, error) {
+	request := &APIRequest{
+		url:     url,
+		params:  params,
+		headers: headers,
+		data:    data,
+	}
+	if err := request.sendRequest(); err != nil {
+		return nil, err
+	}
+	return request, nil
 }
 
 func (r *APIRequest) GetContent() (interface{}, error) {
@@ -83,6 +88,20 @@ func (r *APIRequest) getResponseContent() ([]byte, error) {
 	}
 
 	return content, nil
+}
+
+func (api *APIRequest) GetCookie(cookie string) (*http.Cookie, error) {
+	cookies := api.response.Cookies()
+
+	// Find the specific cookie by name
+	for _, c := range cookies {
+		if c.Name == cookie {
+			return c, nil
+		}
+	}
+
+	// Return an error if the cookie is not found
+	return nil, fmt.Errorf("Cookie not found: %s", cookie)
 }
 
 func parseJSONContent(content []byte) (interface{}, error) {
