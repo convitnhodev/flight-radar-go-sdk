@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/andybalholm/brotli"
 )
@@ -16,7 +17,7 @@ type APIRequest struct {
 	url      string
 	params   url.Values
 	headers  http.Header
-	data     []byte
+	data     url.Values
 	response *http.Response
 }
 
@@ -34,7 +35,7 @@ func (r *APIRequest) sendRequest() error {
 			req.URL.RawQuery = r.params.Encode()
 		}
 	} else {
-		req, err = http.NewRequest("POST", r.url, bytes.NewBuffer(r.data))
+		req, err = http.NewRequest("POST", r.url, strings.NewReader(r.data.Encode()))
 		if err != nil {
 			return err
 		}
@@ -47,7 +48,7 @@ func (r *APIRequest) sendRequest() error {
 	return err
 }
 
-func NewAPIRequest(url string, params url.Values, headers http.Header, data []byte) (*APIRequest, error) {
+func NewAPIRequest(url string, params url.Values, headers http.Header, data url.Values) (*APIRequest, error) {
 	request := &APIRequest{
 		url:     url,
 		params:  params,

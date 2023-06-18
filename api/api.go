@@ -1,8 +1,8 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
+	"net/url"
 	"sdkflight/core"
 	request_ "sdkflight/request"
 )
@@ -38,18 +38,15 @@ func NewCustomFlightRadar24API(config map[string]string) *FlightRadar24API {
 }
 
 func (api *FlightRadar24API) Login(user, password string) (map[string]string, error) {
-	data := map[string]string{
-		"email":    user,
-		"password": password,
-		"remember": "true",
-		"type":     "web",
+	data := url.Values{
+		"email":    {user},
+		"password": {password},
+		"remember": {"true"},
+		"type":     {"web"},
 	}
 	core := core.NewCore()
-	payload, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-	request, err := request_.NewAPIRequest(core.UserLoginURL, nil, core.JSONHeaders, payload)
+
+	request, err := request_.NewAPIRequest(core.UserLoginURL, nil, core.JSONHeaders, data)
 	if err != nil {
 		return nil, err
 	}
