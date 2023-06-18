@@ -6,6 +6,11 @@ import (
 	"testing"
 )
 
+func prettyPrint(i interface{}) string {
+	s, _ := json.MarshalIndent(i, "", "\t")
+	return string(s)
+}
+
 type loginTest struct {
 	user           string
 	password       string
@@ -60,6 +65,18 @@ func TestGetAirlines(t *testing.T) {
 		if len(content) == 0 {
 			t.Errorf("GetAirlines() = %s", "empty")
 		}
+		t.Logf("GetAirlines() = %v", prettyPrint(content)) // TOD
+	}
+}
+
+func TestGetAirports(t *testing.T) {
+	if content, err := test_api.GetAirports(); err != nil {
+		t.Errorf("GetAirports() = %s", err.Error())
+	} else {
+		if len(content) == 0 {
+			t.Errorf("GetAirports() = %s", "empty")
+		}
+		t.Logf("GetAirports() = %v", prettyPrint(content)) // TOD
 	}
 }
 
@@ -100,9 +117,4 @@ func TestGetFlights(t *testing.T) {
 		}
 		t.Logf("GetFlights() = %v", prettyPrint(content)) // TODO: remove
 	}
-}
-
-func prettyPrint(i interface{}) string {
-	s, _ := json.MarshalIndent(i, "", "\t")
-	return string(s)
 }

@@ -106,6 +106,51 @@ func (api *FlightRadar24API) GetAirlines() ([]map[string]interface{}, error) {
 	return rows, nil
 }
 
+func (api *FlightRadar24API) GetAirlineLogo(country string) (string, error) {
+	flagUrl := core.CountryFlagURL
+	formattedCountry := strings.ReplaceAll(strings.ToLower(country), " ", "-")
+	formattedFlagUrl := strings.ReplaceAll(flagUrl, "{}", formattedCountry)
+
+	headers := core.ImageHeaders
+	if _, ok := headers["Origin"]; ok {
+		headers.Del("Origin")
+	}
+
+	req, err := request.NewAPIRequest(formattedFlagUrl, nil, headers, nil).SendRequest()
+	if err != nil {
+		return "", err
+	}
+
+	statusCode := req.GetStatusCode()
+	if !strings.HasPrefix(strconv.Itoa(statusCode), "4") {
+		return formattedFlagUrl, nil
+	}
+	return "", errors.New("invalid country flag")
+
+}
+
+func (api *FlightRadar24API) GetAirports() ([]map[string]interface{}, error) {
+	req, err := request.NewAPIRequest(core.AirportsDataURL, nil, core.JSONHeaders, nil).SendRequest()
+	if err != nil {
+		return nil, fmt.Errorf("cannot send request: %s", err.Error())
+	}
+	content, err := req.GetContent()
+	if err != nil {
+		return nil, fmt.Errorf("cannot get content: %s", err.Error())
+	}
+	result, ok := content.(map[string]interface{})["rows"].([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected content type")
+	}
+
+	rows := make([]map[string]interface{}, len(result))
+	for i, row := range result {
+		rows[i] = row.(map[string]interface{})
+	}
+
+	return rows, nil
+}
+
 func (api *FlightRadar24API) GetZones() (map[string]interface{}, error) {
 	req, err := request.NewAPIRequest(core.ZonesDataURL, nil, core.JSONHeaders, nil).SendRequest()
 	if err != nil {
