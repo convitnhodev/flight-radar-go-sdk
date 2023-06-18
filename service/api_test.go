@@ -156,7 +156,7 @@ func TestGetFlight(t *testing.T) {
 		if content, err := test_api.GetDetailFlight(test); err != nil {
 			t.Errorf("GetDetailFlight() = %s", err.Error())
 		} else {
-			if len(content) == 0 {
+			if content == nil {
 				t.Errorf("GetDetailFlight() = %s", "empty")
 			}
 			t.Logf("GetDetailFlight() = %v", prettyPrint(content)) // TOD

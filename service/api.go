@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -227,7 +228,7 @@ func (api *FlightRadar24API) GetCountryFlag(country string) (string, error) {
 
 }
 
-func (api *FlightRadar24API) GetDetailFlight(flightId string) (map[string]interface{}, error) {
+func (api *FlightRadar24API) GetDetailFlight(flightId string) (*models.DetailFlight, error) {
 	detailFlightUrl := component.FlightDataURL
 	formattedDetailFlightUrl := strings.ReplaceAll(detailFlightUrl, "{}", flightId)
 	req, err := transport.NewAPIRequest(formattedDetailFlightUrl, nil, component.JSONHeaders, nil).SendRequest()
@@ -240,12 +241,21 @@ func (api *FlightRadar24API) GetDetailFlight(flightId string) (map[string]interf
 		return nil, fmt.Errorf("cannot get content: %s", err.Error())
 	}
 
-	result, ok := content.(map[string]interface{})
-	if !ok {
+	jsonData, err := json.Marshal(content)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return nil, err
+	}
+
+	var result models.DetailFlight
+
+	err = json.Unmarshal(jsonData, &result)
+	if err != nil {
+		fmt.Println("Error:", err)
 		return nil, fmt.Errorf("unexpected content type")
 	}
 
-	return result, err
+	return &result, err
 }
 
 func (api *FlightRadar24API) SetRealTimeFlightTrackerConfig(config map[string]string) {

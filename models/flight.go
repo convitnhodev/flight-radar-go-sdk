@@ -78,6 +78,111 @@ type Flight struct {
 	Trail                                 []interface{}          `json:"trail,omitempty"`
 }
 
+type DetailFlight struct {
+	Status struct {
+		Live      bool        `json:"live"`
+		Text      string      `json:"text"`
+		Icon      interface{} `json:"icon"`
+		Estimated interface{} `json:"estimated"`
+		Ambiguous bool        `json:"ambiguous"`
+	}
+	Airline struct {
+		Name string      `json:"name"`
+		Code interface{} `json:"code"`
+		Url  interface{} `json:"url"`
+	} `json:"airline"`
+
+	FlightHistory struct {
+		Aircraft []struct {
+			Identification struct {
+				Id     string      `json:"id"`
+				Number interface{} `json:"number"`
+			} `json:"identification"`
+			Airport struct {
+				Origin      interface{} `json:"origin"`
+				Destination interface{} `json:"destination"`
+			} `json:"airport"`
+			Time struct {
+				Real struct {
+					Departure interface{} `json:"departure"`
+				} `json:"real"`
+			}
+		} `json:"aircraft"`
+	} `json:"flightHistory"`
+
+	Time struct {
+		Scheduled struct {
+			Departure float64 `json:"departure"`
+			Arrival   float64 `json:"arrival"`
+		} `json:"scheduled"`
+
+		Real struct {
+			Departure float64 `json:"departure"`
+			Arrival   float64 `json:"arrival"`
+		} `json:"real"`
+
+		Estimated struct {
+			Departure float64 `json:"departure"`
+			Arrival   float64 `json:"arrival"`
+		} `json:"estimated"`
+
+		Other struct {
+			Eta     float64 `json:"eta"`
+			Updated float64 `json:"updated"`
+		}
+
+		Historical interface{} `json:"historical"`
+	} `json:"time"`
+
+	Airport struct {
+		Origin      interface{} `json:"origin"`
+		Destination interface{} `json:"destination"`
+		Real        interface{} `json:"real"`
+	} `json:"airport"`
+
+	Owner    interface{} `json:"owner"`
+	Promote  bool        `json:"promote"`
+	Level    string      `json:"level"`
+	S        string      `json:"s"`
+	AirSpace interface{} `json:"airspace"`
+	AirCraft struct {
+		Model struct {
+			Code string `json:"code"`
+			Text string `json:"text"`
+		} `json:"model"`
+
+		CountryId    float64     `json:"countryId"`
+		Registration string      `json:"registration"`
+		Age          interface{} `json:"age"`
+		Msn          interface{} `json:"msn"`
+		Image        interface{} `json:"image"`
+		Hex          string      `json:"hex"`
+	} `json:"aircraft"`
+
+	Identification struct {
+		Id     string  `json:"id"`
+		Row    float64 `json:"row"`
+		Number struct {
+			Default     interface{} `json:"default"`
+			Alternative interface{} `json:"alternative"`
+		} `json:"number"`
+		CallSign string `json:"callsign"`
+	} `json:"identification"`
+
+	FirstTimestamp float64 `json:"firstTimestamp"`
+	Trail          []struct {
+		Lat float64 `json:"lat"`
+		Lng float64 `json:"lng"`
+		Alt float64 `json:"alt"`
+		Spd float64 `json:"spd"`
+		Ts  float64 `json:"ts"`
+		Hd  float64 `json:"hd"`
+	} `json:"trail"`
+
+	Ems          interface{}   `json:"ems"`
+	Availability []interface{} `json:"availability"`
+}
+
 func NewFlight(flightID string, info []interface{}) *Flight {
 	flight := &Flight{
 		Id:                     flightID,
