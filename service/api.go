@@ -106,27 +106,33 @@ func (api *FlightRadar24API) GetAirlines() ([]map[string]interface{}, error) {
 	return rows, nil
 }
 
-func (api *FlightRadar24API) GetAirlineLogo(country string) (string, error) {
-	flagUrl := component.CountryFlagURL
-	formattedCountry := strings.ReplaceAll(strings.ToLower(country), " ", "-")
-	formattedFlagUrl := strings.ReplaceAll(flagUrl, "{}", formattedCountry)
+func (api *FlightRadar24API) GetAirlineLogo(iata string, icao string) (string, error) {
+	flagUrl := component.AirlineLogoURL
+	replacedPath := strings.ReplaceAll(flagUrl, "{}_{}", fmt.Sprintf("%s_%s", iata, icao))
 
-	headers := component.ImageHeaders
-	if _, ok := headers["Origin"]; ok {
-		headers.Del("Origin")
-	}
-
-	req, err := transport.NewAPIRequest(formattedFlagUrl, nil, headers, nil).SendRequest()
+	// Get the first airline logo URL.
+	req, err := transport.NewAPIRequest(replacedPath, nil, component.ImageHeaders, nil).SendRequest()
 	if err != nil {
 		return "", err
 	}
 
 	statusCode := req.GetStatusCode()
 	if !strings.HasPrefix(strconv.Itoa(statusCode), "4") {
-		return formattedFlagUrl, nil
+		return replacedPath, nil
 	}
-	return "", errors.New("invalid country flag")
 
+	// Get the second airline logo URL.
+	secondReplacedPath := strings.ReplaceAll(component.AlternativeAirlineLogoURL, "{}", icao)
+	secondReq, err := transport.NewAPIRequest(secondReplacedPath, nil, component.ImageHeaders, nil).SendRequest()
+	if err != nil {
+		return "", err
+	}
+
+	statusCode = secondReq.GetStatusCode()
+	if !strings.HasPrefix(strconv.Itoa(statusCode), "4") {
+		return secondReplacedPath, nil
+	}
+	return "", nil
 }
 
 func (api *FlightRadar24API) GetAirports() ([]map[string]interface{}, error) {
@@ -292,7 +298,6 @@ func (api *FlightRadar24API) GetFlights(airline *string, bounds *string, registr
 	flights := make([]*models.Flight, 0)
 
 	for id, info := range result {
-		fmt.Println(id)
 		if _package.IsNumeric(string(id[0])) {
 			value := info.([]interface{})
 			flights = append(flights, models.NewFlight(id, value))

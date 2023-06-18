@@ -51,6 +51,15 @@ var getAirport = []string{
 	"KBTF",
 }
 
+var getFlight = []string{
+	"30c38acf",
+	"30c3b690",
+	"30c41921",
+	"30c4355f",
+	"306cca05",
+	"30c13531",
+}
+
 var test_api = NewFlightRadar24API()
 
 func TestLogin(t *testing.T) {
@@ -139,5 +148,18 @@ func TestGetFlights(t *testing.T) {
 			t.Errorf("GetFlights() = %s", "empty")
 		}
 		t.Logf("GetFlights() = %v", prettyPrint(content)) // TODO: remove
+	}
+}
+
+func TestGetFlight(t *testing.T) {
+	for _, test := range getFlight {
+		if content, err := test_api.GetDetailFlight(test); err != nil {
+			t.Errorf("GetDetailFlight() = %s", err.Error())
+		} else {
+			if len(content) == 0 {
+				t.Errorf("GetDetailFlight() = %s", "empty")
+			}
+			t.Logf("GetDetailFlight() = %v", prettyPrint(content)) // TOD
+		}
 	}
 }
