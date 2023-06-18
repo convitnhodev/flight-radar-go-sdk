@@ -3,6 +3,7 @@ package api
 import (
 	"errors"
 	"fmt"
+	_package "github.com/convitnhodev/flight-radar-go-sdk/package"
 	"io"
 	"strconv"
 	"strings"
@@ -147,4 +148,33 @@ func (api *FlightRadar24API) GetCountryFlag(country string) (string, error) {
 	}
 	return "", errors.New("invalid country flag")
 
+}
+
+func (api *FlightRadar24API) GetDetailFlight(flightId string) (map[string]interface{}, error) {
+	detailFlightUrl := core.FlightDataURL
+	formattedDetailFlightUrl := strings.ReplaceAll(detailFlightUrl, "{}", flightId)
+	req, err := request.NewAPIRequest(formattedDetailFlightUrl, nil, core.JSONHeaders, nil).SendRequest()
+	if err != nil {
+		return nil, err
+	}
+
+	content, err := req.GetContent()
+	if err != nil {
+		return nil, fmt.Errorf("cannot get content: %s", err.Error())
+	}
+
+	result, ok := content.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected content type")
+	}
+
+	return result, err
+}
+
+func (api *FlightRadar24API) SetRealTimeFlightTrackerConfig(config map[string]string) {
+	for key, value := range config {
+		if _, ok := api.realTimeFlightTrackerConfig[key]; ok && _package.IsNumeric(value) {
+			api.realTimeFlightTrackerConfig[key] = value
+		}
+	}
 }
