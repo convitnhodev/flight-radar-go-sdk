@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"errors"
 	"testing"
 )
@@ -88,4 +89,20 @@ func TestGetCountryFlag(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestGetFlights(t *testing.T) {
+	if content, err := test_api.GetFlights(nil, nil, nil, nil); err != nil {
+		t.Errorf("GetFlights() = %s", err.Error())
+	} else {
+		if len(content) == 0 {
+			t.Errorf("GetFlights() = %s", "empty")
+		}
+		t.Logf("GetFlights() = %v", prettyPrint(content)) // TODO: remove
+	}
+}
+
+func prettyPrint(i interface{}) string {
+	s, _ := json.MarshalIndent(i, "", "\t")
+	return string(s)
 }

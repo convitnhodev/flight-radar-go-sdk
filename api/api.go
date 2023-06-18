@@ -3,12 +3,13 @@ package api
 import (
 	"errors"
 	"fmt"
-	"github.com/convitnhodev/flight-radar-go-sdk/models"
-	_package "github.com/convitnhodev/flight-radar-go-sdk/package"
 	"io"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/convitnhodev/flight-radar-go-sdk/models"
+	_package "github.com/convitnhodev/flight-radar-go-sdk/package"
 
 	"github.com/convitnhodev/flight-radar-go-sdk/core"
 	"github.com/convitnhodev/flight-radar-go-sdk/request"
@@ -33,7 +34,7 @@ func NewFlightRadar24API() *FlightRadar24API {
 			"maxage":    "14400",
 			"gliders":   "1",
 			"stats":     "1",
-			"limit":     "5000",
+			"limit":     "10", // TODO: change limit to 5000
 		},
 	}
 }
@@ -223,13 +224,12 @@ func (api *FlightRadar24API) GetFlights(airline *string, bounds *string, registr
 	flights := make([]*models.Flight, 0)
 
 	for id, info := range result {
+		fmt.Println(id)
 		if _package.IsNumeric(string(id[0])) {
 			value := info.([]interface{})
 			flights = append(flights, models.NewFlight(id, value))
 		}
 	}
-
-	fmt.Println(result)
 
 	return flights, nil
 }
