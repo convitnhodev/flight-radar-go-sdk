@@ -52,7 +52,7 @@ func NewCore() *Core {
 		AirportDataURL:               "",
 		AirportsDataURL:              "",
 		AirlinesDataURL:              "",
-		ZonesDataURL:                 "",
+		ZonesDataURL:                 "https://www.flightradar24.com/js/zones.js.php",
 		CountryFlagURL:               "",
 		AirlineLogoURL:               "",
 		AlternativeAirlineLogoURL:    "",

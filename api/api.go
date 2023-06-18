@@ -75,3 +75,25 @@ func (api *FlightRadar24API) Login(user, password string) (map[string]interface{
 
 	return result, nil
 }
+
+func (api *FlightRadar24API) GetZones() (map[string]interface{}, error) {
+	core := core.NewCore()
+
+	req, err := request.NewAPIRequest(core.ZonesDataURL, nil, core.JSONHeaders, nil).SendRequest()
+	if err != nil {
+		return nil, err
+	}
+
+	content, err := req.GetContent()
+	if err != nil {
+		return nil, err
+	}
+
+	result, ok := content.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected content type")
+	}
+
+	return result, nil
+
+}
