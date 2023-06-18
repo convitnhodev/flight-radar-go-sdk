@@ -1,4 +1,4 @@
-package api
+package service
 
 import (
 	"encoding/json"
@@ -42,6 +42,15 @@ var getCountryFlagTests = []getCountryFlagTest{
 	{"xxx", "", errors.New("invalid country flag")},
 }
 
+var getAirport = []string{
+	"BQL",
+	"BYK",
+	"UAR",
+	"BLD",
+	"WBU",
+	"KBTF",
+}
+
 var test_api = NewFlightRadar24API()
 
 func TestLogin(t *testing.T) {
@@ -78,6 +87,20 @@ func TestGetAirports(t *testing.T) {
 		}
 		t.Logf("GetAirports() = %v", prettyPrint(content)) // TOD
 	}
+}
+
+func TestGetAirport(t *testing.T) {
+	for _, test := range getAirport {
+		if content, err := test_api.GetAirport(test); err != nil {
+			t.Errorf("GetAirport() = %s", err.Error())
+		} else {
+			if len(content) == 0 {
+				t.Errorf("GetAirport() = %s", "empty")
+			}
+			t.Logf("GetAirport() = %v", prettyPrint(content)) // TOD
+		}
+	}
+
 }
 
 func TestGetZones(t *testing.T) {

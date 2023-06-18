@@ -1,4 +1,4 @@
-package api
+package service
 
 import (
 	"errors"
@@ -11,8 +11,8 @@ import (
 	"github.com/convitnhodev/flight-radar-go-sdk/models"
 	_package "github.com/convitnhodev/flight-radar-go-sdk/package"
 
-	"github.com/convitnhodev/flight-radar-go-sdk/core"
-	"github.com/convitnhodev/flight-radar-go-sdk/request"
+	"github.com/convitnhodev/flight-radar-go-sdk/component"
+	"github.com/convitnhodev/flight-radar-go-sdk/transport"
 )
 
 type FlightRadar24API struct {
@@ -53,7 +53,7 @@ func (api *FlightRadar24API) Login(user, password string) (map[string]interface{
 		"type":     strings.NewReader("web"),
 	}
 
-	req, err := request.NewAPIRequest(core.UserLoginURL, nil, core.JSONHeaders, payload).SendRequest()
+	req, err := transport.NewAPIRequest(component.UserLoginURL, nil, component.JSONHeaders, payload).SendRequest()
 	if err != nil {
 		return nil, fmt.Errorf("cannot send request: %s", err.Error())
 	}
@@ -83,7 +83,7 @@ func (api *FlightRadar24API) Login(user, password string) (map[string]interface{
 
 // Get the data from Flightradar24.
 func (api *FlightRadar24API) GetAirlines() ([]map[string]interface{}, error) {
-	req, err := request.NewAPIRequest(core.AirlinesDataURL, nil, core.JSONHeaders, nil).SendRequest()
+	req, err := transport.NewAPIRequest(component.AirlinesDataURL, nil, component.JSONHeaders, nil).SendRequest()
 	if err != nil {
 		return nil, fmt.Errorf("cannot send request: %s", err.Error())
 	}
@@ -107,16 +107,16 @@ func (api *FlightRadar24API) GetAirlines() ([]map[string]interface{}, error) {
 }
 
 func (api *FlightRadar24API) GetAirlineLogo(country string) (string, error) {
-	flagUrl := core.CountryFlagURL
+	flagUrl := component.CountryFlagURL
 	formattedCountry := strings.ReplaceAll(strings.ToLower(country), " ", "-")
 	formattedFlagUrl := strings.ReplaceAll(flagUrl, "{}", formattedCountry)
 
-	headers := core.ImageHeaders
+	headers := component.ImageHeaders
 	if _, ok := headers["Origin"]; ok {
 		headers.Del("Origin")
 	}
 
-	req, err := request.NewAPIRequest(formattedFlagUrl, nil, headers, nil).SendRequest()
+	req, err := transport.NewAPIRequest(formattedFlagUrl, nil, headers, nil).SendRequest()
 	if err != nil {
 		return "", err
 	}
@@ -130,7 +130,7 @@ func (api *FlightRadar24API) GetAirlineLogo(country string) (string, error) {
 }
 
 func (api *FlightRadar24API) GetAirports() ([]map[string]interface{}, error) {
-	req, err := request.NewAPIRequest(core.AirportsDataURL, nil, core.JSONHeaders, nil).SendRequest()
+	req, err := transport.NewAPIRequest(component.AirportsDataURL, nil, component.JSONHeaders, nil).SendRequest()
 	if err != nil {
 		return nil, fmt.Errorf("cannot send request: %s", err.Error())
 	}
@@ -151,8 +151,31 @@ func (api *FlightRadar24API) GetAirports() ([]map[string]interface{}, error) {
 	return rows, nil
 }
 
+func (api *FlightRadar24API) GetAirport(code string) (map[string]interface{}, error) {
+
+	detailAirportURL := component.AirportDataURL
+	formattedDetailAirportUrl := strings.ReplaceAll(detailAirportURL, "{}", code)
+	req, err := transport.NewAPIRequest(formattedDetailAirportUrl, nil, component.JSONHeaders, nil).SendRequest()
+	if err != nil {
+		return nil, err
+	}
+
+	content, err := req.GetContent()
+	if err != nil {
+		return nil, fmt.Errorf("cannot get content: %s", err.Error())
+	}
+
+	result, ok := content.(map[string]interface{})["details"].((map[string]interface{}))
+	if !ok {
+		return nil, fmt.Errorf("unexpected content type")
+	}
+
+	return result, nil
+
+}
+
 func (api *FlightRadar24API) GetZones() (map[string]interface{}, error) {
-	req, err := request.NewAPIRequest(core.ZonesDataURL, nil, core.JSONHeaders, nil).SendRequest()
+	req, err := transport.NewAPIRequest(component.ZonesDataURL, nil, component.JSONHeaders, nil).SendRequest()
 	if err != nil {
 		return nil, fmt.Errorf("cannot send request: %s", err.Error())
 	}
@@ -176,16 +199,16 @@ func (api *FlightRadar24API) GetRealTimeFlightTrackerConfig() map[string]string 
 }
 
 func (api *FlightRadar24API) GetCountryFlag(country string) (string, error) {
-	flagUrl := core.CountryFlagURL
+	flagUrl := component.CountryFlagURL
 	formattedCountry := strings.ReplaceAll(strings.ToLower(country), " ", "-")
 	formattedFlagUrl := strings.ReplaceAll(flagUrl, "{}", formattedCountry)
 
-	headers := core.ImageHeaders
+	headers := component.ImageHeaders
 	if _, ok := headers["Origin"]; ok {
 		headers.Del("Origin")
 	}
 
-	req, err := request.NewAPIRequest(formattedFlagUrl, nil, headers, nil).SendRequest()
+	req, err := transport.NewAPIRequest(formattedFlagUrl, nil, headers, nil).SendRequest()
 	if err != nil {
 		return "", err
 	}
@@ -199,9 +222,9 @@ func (api *FlightRadar24API) GetCountryFlag(country string) (string, error) {
 }
 
 func (api *FlightRadar24API) GetDetailFlight(flightId string) (map[string]interface{}, error) {
-	detailFlightUrl := core.FlightDataURL
+	detailFlightUrl := component.FlightDataURL
 	formattedDetailFlightUrl := strings.ReplaceAll(detailFlightUrl, "{}", flightId)
-	req, err := request.NewAPIRequest(formattedDetailFlightUrl, nil, core.JSONHeaders, nil).SendRequest()
+	req, err := transport.NewAPIRequest(formattedDetailFlightUrl, nil, component.JSONHeaders, nil).SendRequest()
 	if err != nil {
 		return nil, err
 	}
@@ -251,7 +274,7 @@ func (api *FlightRadar24API) GetFlights(airline *string, bounds *string, registr
 		values.Add(key, value)
 	}
 
-	req, err := request.NewAPIRequest(core.RealTimeFlightTrackerDataURL, values, core.JSONHeaders, nil).SendRequest()
+	req, err := transport.NewAPIRequest(component.RealTimeFlightTrackerDataURL, values, component.JSONHeaders, nil).SendRequest()
 	if err != nil {
 		return nil, err
 	}
