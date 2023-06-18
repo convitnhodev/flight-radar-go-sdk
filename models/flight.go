@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"time"
 
 	_package "github.com/convitnhodev/flight-radar-go-sdk/package"
 )
@@ -13,21 +14,21 @@ const (
 type Flight struct {
 	Id                                    string                 `json:"id,omitempty"`
 	Icao24bit                             string                 `json:"icao24bit,omitempty"`
-	Latitude                              string                 `json:"latitude,omitempty"`
-	Longitude                             string                 `json:"longitude,omitempty"`
-	Heading                               string                 `json:"heading,omitempty"`
-	Altitude                              string                 `json:"altitude,omitempty"`
-	GroundSpeed                           string                 `json:"ground_speed,omitempty"`
+	Latitude                              float64                `json:"latitude,omitempty"`
+	Longitude                             float64                `json:"longitude,omitempty"`
+	Heading                               float64                `json:"heading,omitempty"`
+	Altitude                              float64                `json:"altitude,omitempty"`
+	GroundSpeed                           float64                `json:"ground_speed,omitempty"`
 	Squawk                                string                 `json:"squawk,omitempty"`
 	AircraftCode                          string                 `json:"aircraft_code,omitempty"`
 	Registration                          string                 `json:"registration,omitempty"`
-	Time                                  string                 `json:"time,omitempty"`
+	Time                                  time.Time              `json:"time,omitempty"`
 	OriginAirportIATA                     string                 `json:"origin_airport_iata,omitempty"`
 	DestinationAirportIATA                string                 `json:"destination_airport_iata,omitempty"`
 	Number                                string                 `json:"number,omitempty"`
 	AirlineIATA                           string                 `json:"airline_iata,omitempty"`
-	OnGround                              string                 `json:"on_ground,omitempty"`
-	VerticalSpeed                         string                 `json:"vertical_speed,omitempty"`
+	OnGround                              float64                `json:"on_ground,omitempty"`
+	VerticalSpeed                         float64                `json:"vertical_speed,omitempty"`
 	CallSign                              string                 `json:"call_sign,omitempty"`
 	AirlineICAO                           string                 `json:"airline_icao,omitempty"`
 	AircraftAge                           string                 `json:"aircraft_age,omitempty"`
@@ -81,21 +82,21 @@ func NewFlight(flightID string, info []interface{}) *Flight {
 	flight := &Flight{
 		Id:                     flightID,
 		Icao24bit:              getFlightInfo(info[0]),
-		Latitude:               getFlightInfo(info[1]),
-		Longitude:              getFlightInfo(info[2]),
-		Heading:                getFlightInfo(info[3]),
-		Altitude:               getFlightInfo(info[4]),
-		GroundSpeed:            getFlightInfo(info[5]),
+		Latitude:               getFlightInfoFloat(info[1]),
+		Longitude:              getFlightInfoFloat(info[2]),
+		Heading:                getFlightInfoFloat(info[3]),
+		Altitude:               getFlightInfoFloat(info[4]),
+		GroundSpeed:            getFlightInfoFloat(info[5]),
 		Squawk:                 getFlightInfo(info[6]),
 		AircraftCode:           getFlightInfo(info[8]),
 		Registration:           getFlightInfo(info[9]),
-		Time:                   getFlightInfo(info[10]),
+		Time:                   getFlightInfoTime(info[10]),
 		OriginAirportIATA:      getFlightInfo(info[11]),
 		DestinationAirportIATA: getFlightInfo(info[12]),
 		Number:                 getFlightInfo(info[13]),
 		AirlineIATA:            getAirlineIATA(info[13]),
-		OnGround:               getFlightInfo(info[14]),
-		VerticalSpeed:          getFlightInfo(info[15]),
+		OnGround:               getFlightInfoFloat(info[14]),
+		VerticalSpeed:          getFlightInfoFloat(info[15]),
 		CallSign:               getFlightInfo(info[16]),
 		AirlineICAO:            getFlightInfo(info[18]),
 	}
@@ -106,21 +107,21 @@ func NewDetailFlight(flightID string, info []interface{}) *Flight {
 	flight := &Flight{
 		Id:                                    flightID,
 		Icao24bit:                             getFlightInfo(info[0]),
-		Latitude:                              getFlightInfo(info[1]),
-		Longitude:                             getFlightInfo(info[2]),
-		Heading:                               getFlightInfo(info[3]),
-		Altitude:                              getFlightInfo(info[4]),
-		GroundSpeed:                           getFlightInfo(info[5]),
+		Latitude:                              getFlightInfoFloat(info[1]),
+		Longitude:                             getFlightInfoFloat(info[2]),
+		Heading:                               getFlightInfoFloat(info[3]),
+		Altitude:                              getFlightInfoFloat(info[4]),
+		GroundSpeed:                           getFlightInfoFloat(info[5]),
 		Squawk:                                getFlightInfo(info[6]),
 		AircraftCode:                          getFlightInfo(info[8]),
 		Registration:                          getFlightInfo(info[9]),
-		Time:                                  getFlightInfo(info[10]),
+		Time:                                  getFlightInfoTime(info[10]),
 		OriginAirportIATA:                     getFlightInfo(info[11]),
 		DestinationAirportIATA:                getFlightInfo(info[12]),
 		Number:                                getFlightInfo(info[13]),
 		AirlineIATA:                           getAirlineIATA(info[13]),
-		OnGround:                              getFlightInfo(info[14]),
-		VerticalSpeed:                         getFlightInfo(info[15]),
+		OnGround:                              getFlightInfoFloat(info[14]),
+		VerticalSpeed:                         getFlightInfoFloat(info[15]),
 		CallSign:                              getFlightInfo(info[16]),
 		AirlineICAO:                           getFlightInfo(info[17]),
 		AircraftAge:                           getFlightInfo(info[18]),
@@ -178,6 +179,21 @@ func getFlightInfo(info interface{}) string {
 	} else {
 		return defaultText
 	}
+}
+
+func getFlightInfoFloat(info interface{}) float64 {
+	if (info != nil || info == 0) && info != defaultText {
+		return (info).(float64)
+	} else {
+		return -1
+	}
+}
+
+func getFlightInfoTime(info interface{}) time.Time {
+	timestamp := (info).(float64)
+	intTimestamp := int64(timestamp)
+	t := time.Unix(intTimestamp, 0)
+	return t
 }
 
 func getAirlineIATA(info interface{}) string {
