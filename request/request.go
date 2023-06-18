@@ -4,9 +4,12 @@ import (
 	"bytes"
 	"compress/gzip"
 	"encoding/json"
+	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/url"
+	"os"
 
 	"github.com/andybalholm/brotli"
 )
@@ -15,11 +18,11 @@ type APIRequest struct {
 	url      string
 	params   url.Values
 	headers  http.Header
-	data     []byte
+	data     map[string]io.Reader
 	response *http.Response
 }
 
-func NewAPIRequest(url string, params url.Values, headers http.Header, data []byte) *APIRequest {
+func NewAPIRequest(url string, params url.Values, headers http.Header, data map[string]io.Reader) *APIRequest {
 	return &APIRequest{
 		url:     url,
 		params:  params,
@@ -28,31 +31,40 @@ func NewAPIRequest(url string, params url.Values, headers http.Header, data []by
 	}
 }
 
-func (r *APIRequest) SendRequest() error {
+func (r *APIRequest) SendRequest() (*APIRequest, error) {
 	var req *http.Request
 	var err error
 
 	if r.data == nil {
 		req, err = http.NewRequest("GET", r.url, nil)
 		if err != nil {
-			return err
+			return r, err
 		}
 
 		if r.params != nil {
 			req.URL.RawQuery = r.params.Encode()
 		}
+		req.Header = r.headers
 	} else {
-		req, err = http.NewRequest("POST", r.url, bytes.NewBuffer(r.data))
+		b, contentType, err := prepareForm(r.data)
 		if err != nil {
-			return err
+			return r, err
 		}
+		req, err = http.NewRequest("POST", r.url, b)
+		if err != nil {
+			return r, err
+		}
+		req.Header = r.headers
+		req.Header.Set("Content-Type", contentType)
 	}
-
-	req.Header = r.headers
 
 	client := &http.Client{}
 	r.response, err = client.Do(req)
-	return err
+	if err != nil {
+		return r, err
+	}
+
+	return r, err
 }
 
 func (r *APIRequest) GetContent() (interface{}, error) {
@@ -67,6 +79,50 @@ func (r *APIRequest) GetContent() (interface{}, error) {
 	}
 
 	return content, nil
+}
+
+func (r *APIRequest) GetCookie(cookie string) (*http.Cookie, error) {
+	cookies := r.response.Cookies()
+
+	// Find the specific cookie by name
+	for _, c := range cookies {
+		if c.Name == cookie {
+			return c, nil
+		}
+	}
+
+	// Return an error if the cookie is not found
+	return nil, fmt.Errorf("cookie not found: %s", cookie)
+}
+
+func prepareForm(values map[string]io.Reader) (*bytes.Buffer, string, error) {
+	var b bytes.Buffer
+	w := multipart.NewWriter(&b)
+	for key, r := range values {
+		var fw io.Writer
+		var err error
+		if x, ok := r.(io.Closer); ok {
+			defer x.Close()
+		}
+		if x, ok := r.(*os.File); ok {
+			// Add file
+			if fw, err = w.CreateFormFile(key, x.Name()); err != nil {
+				return nil, "", err
+			}
+		} else {
+			// Add other fields
+			if fw, err = w.CreateFormField(key); err != nil {
+				return nil, "", err
+			}
+		}
+		if _, err := io.Copy(fw, r); err != nil {
+			return nil, "", err
+		}
+
+	}
+	defer w.Close()
+
+	return &b, w.FormDataContentType(), nil
 }
 
 func (r *APIRequest) getResponseContent() ([]byte, error) {
@@ -85,8 +141,8 @@ func (r *APIRequest) getResponseContent() ([]byte, error) {
 	return content, nil
 }
 
-func parseJSONContent(content []byte) (interface{}, error) {
-	var parsedContent interface{}
+func parseJSONContent(content []byte) (map[string]interface{}, error) {
+	var parsedContent map[string]interface{}
 	err := json.Unmarshal(content, &parsedContent)
 	if err != nil {
 		return nil, err
@@ -109,38 +165,3 @@ func gzipDecode(content []byte) ([]byte, error) {
 
 	return io.ReadAll(r)
 }
-
-//func main() {
-//	// Example usage
-//	params := url.Values{}
-//	params.Set("key1", "value1")
-//	params.Set("key2", "value2")
-//
-//	headers := http.Header{}
-//	headers.Set("Content-Type", "application/json")
-//	headers.Set("Authorization", "Bearer token123")
-//
-//	request := NewAPIRequest("https://example.com/api", params, headers, nil)
-//	err := request.sendRequest()
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	content, err := request.GetContent()
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	// Handle the content accordingly
-//	switch content.(type) {
-//	case []byte:
-//		// Content is a byte array
-//		// Handle as needed
-//	case map[string]interface{}:
-//		// Content is a JSON object
-//		// Handle as needed
-//	default:
-//		// Content has an unknown type
-//
-//	}
-//}
