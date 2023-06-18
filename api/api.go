@@ -3,8 +3,10 @@ package api
 import (
 	"errors"
 	"fmt"
+	"github.com/convitnhodev/flight-radar-go-sdk/models"
 	_package "github.com/convitnhodev/flight-radar-go-sdk/package"
 	"io"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -177,4 +179,57 @@ func (api *FlightRadar24API) SetRealTimeFlightTrackerConfig(config map[string]st
 			api.realTimeFlightTrackerConfig[key] = value
 		}
 	}
+}
+
+func (api *FlightRadar24API) GetFlights(airline *string, bounds *string, registration *string, aircraftType *string) ([]*models.Flight, error) {
+	requestParams := api.realTimeFlightTrackerConfig
+
+	if airline != nil {
+		requestParams["airline"] = *airline
+	}
+
+	if bounds != nil {
+		requestParams["bounds"] = strings.Replace(*bounds, ",", "%2C", -1)
+	}
+
+	if registration != nil {
+		requestParams["reg"] = *registration
+	}
+
+	if aircraftType != nil {
+		requestParams["type"] = *aircraftType
+	}
+
+	values := url.Values{}
+	for key, value := range requestParams {
+		values.Add(key, value)
+	}
+
+	req, err := request.NewAPIRequest(core.RealTimeFlightTrackerDataURL, values, core.JSONHeaders, nil).SendRequest()
+	if err != nil {
+		return nil, err
+	}
+
+	content, err := req.GetContent()
+	if err != nil {
+		return nil, fmt.Errorf("cannot get content: %s", err.Error())
+	}
+
+	result, ok := content.(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected content type")
+	}
+
+	flights := make([]*models.Flight, 0)
+
+	for id, info := range result {
+		if _package.IsNumeric(string(id[0])) {
+			value := info.([]interface{})
+			flights = append(flights, models.NewFlight(id, value))
+		}
+	}
+
+	fmt.Println(result)
+
+	return flights, nil
 }
