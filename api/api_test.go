@@ -15,20 +15,20 @@ type getZonesTest struct {
 }
 
 var loginTests = []loginTest{
-	{"", "", "success"}, // TODO: add user and password to test login
 	{"random", "random", "fail"},
+	// {"", "", "success"}, // TODO: add user and password to test login
 }
 
 var getzonesTests = []getZonesTest{
 	{4},
 }
 
-func TestLogin(t *testing.T) {
-	api := NewFlightRadar24API()
+var test_api = NewFlightRadar24API()
 
+func TestLogin(t *testing.T) {
 	for _, test := range loginTests {
-		if content, err := api.Login(test.user, test.password); err != nil {
-			if status, ok := content["status"]; !ok && status != test.expectedStatus {
+		if content, err := test_api.Login(test.user, test.password); err != nil {
+			if status, ok := content["status"]; !ok || status != test.expectedStatus {
 				t.Errorf("Login(%s, %s) = %s; expected %s (%s)", test.user, test.password, content["status"], test.expectedStatus, content["message"])
 			}
 		} else {
@@ -39,11 +39,19 @@ func TestLogin(t *testing.T) {
 	}
 }
 
-func TestGetZones(t *testing.T) {
-	api := NewFlightRadar24API()
+func TestGetAirlines(t *testing.T) {
+	if content, err := test_api.GetAirlines(); err != nil {
+		t.Errorf("GetAirlines() = %s", err.Error())
+	} else {
+		if len(content) == 0 {
+			t.Errorf("GetAirlines() = %s", "empty")
+		}
+	}
+}
 
+func TestGetZones(t *testing.T) {
 	for _, test := range getzonesTests {
-		if content, err := api.GetZones(); err != nil {
+		if content, err := test_api.GetZones(); err != nil {
 			if status, ok := content["version"]; !ok && status != test.expectedVersion {
 				t.Errorf("Getzones version = %v; expected %v ", content["version"], test.expectedVersion)
 			}

@@ -59,7 +59,9 @@ func (r *APIRequest) SendRequest() (*APIRequest, error) {
 	}
 
 	client := &http.Client{}
+
 	r.response, err = client.Do(req)
+
 	if err != nil {
 		return r, err
 	}

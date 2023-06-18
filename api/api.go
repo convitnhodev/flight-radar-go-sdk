@@ -40,7 +40,6 @@ func NewCustomFlightRadar24API(config map[string]string) *FlightRadar24API {
 }
 
 func (api *FlightRadar24API) Login(user, password string) (map[string]interface{}, error) {
-	core := core.NewCore()
 	payload := map[string]io.Reader{
 		"email":    strings.NewReader(user),
 		"password": strings.NewReader(password),
@@ -50,12 +49,12 @@ func (api *FlightRadar24API) Login(user, password string) (map[string]interface{
 
 	req, err := request.NewAPIRequest(core.UserLoginURL, nil, core.JSONHeaders, payload).SendRequest()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot send request: %s", err.Error())
 	}
 
 	content, err := req.GetContent()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot get content: %s", err.Error())
 	}
 
 	result, ok := content.(map[string]interface{})
@@ -63,30 +62,53 @@ func (api *FlightRadar24API) Login(user, password string) (map[string]interface{
 		return nil, fmt.Errorf("unexpected content type")
 	}
 
-	if result["status"] != "success" {
+	if status, ok := result["status"]; !ok || status != "success" {
 		return result, fmt.Errorf("login failed: %s", result["message"])
 	}
 
 	cookie, err := req.GetCookie("_frPl")
 	if err != nil {
-		return nil, fmt.Errorf("cannot get cookie")
+		return result, fmt.Errorf("cannot get cookie: %s", err.Error())
 	}
 	api.realTimeFlightTrackerConfig["enc"] = cookie.Value
 
 	return result, nil
 }
 
-func (api *FlightRadar24API) GetZones() (map[string]interface{}, error) {
-	core := core.NewCore()
-
-	req, err := request.NewAPIRequest(core.ZonesDataURL, nil, core.JSONHeaders, nil).SendRequest()
+// Get the data from Flightradar24.
+func (api *FlightRadar24API) GetAirlines() ([]map[string]interface{}, error) {
+	req, err := request.NewAPIRequest(core.AirlinesDataURL, nil, core.JSONHeaders, nil).SendRequest()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot send request: %s", err.Error())
 	}
 
 	content, err := req.GetContent()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("cannot get content: %s", err.Error())
+	}
+
+	result, ok := content.(map[string]interface{})["rows"].([]interface{})
+	if !ok {
+		return nil, fmt.Errorf("unexpected content type")
+	}
+
+	rows := make([]map[string]interface{}, len(result))
+	for i, row := range result {
+		rows[i] = row.(map[string]interface{})
+	}
+
+	return rows, nil
+}
+
+func (api *FlightRadar24API) GetZones() (map[string]interface{}, error) {
+	req, err := request.NewAPIRequest(core.ZonesDataURL, nil, core.JSONHeaders, nil).SendRequest()
+	if err != nil {
+		return nil, fmt.Errorf("cannot send request: %s", err.Error())
+	}
+
+	content, err := req.GetContent()
+	if err != nil {
+		return nil, fmt.Errorf("cannot get content: %s", err.Error())
 	}
 
 	result, ok := content.(map[string]interface{})

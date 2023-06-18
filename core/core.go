@@ -4,105 +4,72 @@ import (
 	"net/http"
 )
 
-type Core struct {
+var (
 	// Base URLs.
-	CDNFlightradarBaseURL string
-	FlightradarBaseURL    string
-	DataLiveBaseURL       string
-	DataCloudBaseURL      string
+	CDNFlightradarBaseURL string = "https://cdn.flightradar24.com"
+	FlightradarBaseURL    string = "https://www.flightradar24.com"
+	DataLiveBaseURL       string = "https://data-live.flightradar24.com"
+	DataCloudBaseURL      string = "https://data-cloud.flightradar24.com"
 
 	// User login URL.
-	UserLoginURL string
+	UserLoginURL string = FlightradarBaseURL + "/user/login"
 
 	// Flights data URLs.
-	RealTimeFlightTrackerDataURL string
-	FlightDataURL                string
+	RealTimeFlightTrackerDataURL string = DataCloudBaseURL + "/zones/fcgi/feed.js"
+	FlightDataURL                string = DataLiveBaseURL + "/clickhandler/?flight={}"
 
 	// Airports data URLs.
-	AirportDataURL  string
-	AirportsDataURL string
+	AirportDataURL  string = FlightradarBaseURL + "/airports/traffic-stats/?airport={}"
+	AirportsDataURL string = FlightradarBaseURL + "/_json/airports.php"
 
 	// Airlines data URL.
-	AirlinesDataURL string
+	AirlinesDataURL string = FlightradarBaseURL + "/_json/airlines.php"
 
 	// Zones data URL.
-	ZonesDataURL string
+	ZonesDataURL string = FlightradarBaseURL + "/js/zones.js.php"
 
 	// Country flag image URL.
-	CountryFlagURL string
+	CountryFlagURL string = FlightradarBaseURL + "/static/images/data/flags-small/{}.svg"
 
 	// Airline logo image URL.
-	AirlineLogoURL            string
-	AlternativeAirlineLogoURL string
+	AirlineLogoURL            string = CDNFlightradarBaseURL + "/assets/airlines/logotypes/{}_{}.png"
+	AlternativeAirlineLogoURL string = FlightradarBaseURL + "/static/images/data/operators/{}_logo0.png"
 
-	Headers      http.Header
-	JSONHeaders  http.Header
-	ImageHeaders http.Header
-}
-
-func NewCore() *Core {
-	core := &Core{
-		CDNFlightradarBaseURL:        "https://cdn.flightradar24.com",
-		FlightradarBaseURL:           "https://www.flightradar24.com",
-		DataLiveBaseURL:              "https://data-live.flightradar24.com",
-		DataCloudBaseURL:             "https://data-cloud.flightradar24.com",
-		UserLoginURL:                 "https://www.flightradar24.com/user/login",
-		RealTimeFlightTrackerDataURL: "",
-		FlightDataURL:                "",
-		AirportDataURL:               "",
-		AirportsDataURL:              "",
-		AirlinesDataURL:              "",
-		ZonesDataURL:                 "https://www.flightradar24.com/js/zones.js.php",
-		CountryFlagURL:               "",
-		AirlineLogoURL:               "",
-		AlternativeAirlineLogoURL:    "",
-		Headers: http.Header{
-			"accept-encoding": []string{"gzip, br"},
-			"accept-language": []string{"pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"},
-			"cache-control":   []string{"max-age=0"},
-			"origin":          []string{"https://www.flightradar24.com"},
-			"referer":         []string{"https://www.flightradar24.com/"},
-			"sec-fetch-dest":  []string{"empty"},
-			"sec-fetch-mode":  []string{"cors"},
-			"sec-fetch-site":  []string{"same-site"},
-			"user-agent":      []string{"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"},
-		},
-		JSONHeaders: http.Header{
-			"Accept-Encoding": []string{"gzip, br"},
-			"Accept-Language": []string{"pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"},
-			"Cache-Control":   []string{"max-age=0"},
-			"Origin":          []string{"https://www.flightradar24.com"},
-			"Referer":         []string{"https://www.flightradar24.com/"},
-			"Sec-Fetch-Dest":  []string{"empty"},
-			"Sec-Detch-Mode":  []string{"cors"},
-			"Sec-Detch-Site":  []string{"same-site"},
-			"User-Agent":      []string{"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"},
-			"Accept":          []string{"application/json"},
-		},
-		ImageHeaders: http.Header{
-			"accept-encoding": []string{"gzip, br"},
-			"accept-language": []string{"pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"},
-			"cache-control":   []string{"max-age=0"},
-			"origin":          []string{"https://www.flightradar24.com"},
-			"referer":         []string{"https://www.flightradar24.com/"},
-			"sec-fetch-dest":  []string{"empty"},
-			"sec-fetch-mode":  []string{"cors"},
-			"sec-fetch-site":  []string{"same-site"},
-			"user-agent":      []string{"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"},
-			"accept":          []string{"image/gif, image/jpg, image/jpeg, image/png"},
-		},
+	Headers http.Header = http.Header{
+		"Accept-Encoding": []string{"gzip, br"},
+		"Accept-Language": []string{"pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"},
+		"Cache-Control":   []string{"max-age=0"},
+		"Origin":          []string{"https://www.flightradar24.com"},
+		"Referer":         []string{"https://www.flightradar24.com/"},
+		"Sec-Fetch-Dest":  []string{"empty"},
+		"Sec-Fetch-Mode":  []string{"cors"},
+		"Sec-Fetch-Site":  []string{"same-site"},
+		"User-Agent":      []string{"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"},
 	}
-	return core
-}
 
-//func main() {
-//	// Create a new instance of Core
-//	core := NewCore()
-//
-//	// Access the properties of the Core instance
-//	println("CDNFlightradarBaseURL:", core.CDNFlightradarBaseURL)
-//	println("FlightradarBaseURL:", core.FlightradarBaseURL)
-//	println("DataLiveBaseURL:", core.DataLiveBaseURL)
-//	println("DataCloudBaseURL:", core.DataCloudBaseURL)
-//	// ...
-//}
+	JSONHeaders http.Header = http.Header{
+		"Accept-Encoding": []string{"gzip, br"},
+		"Accept-Language": []string{"pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"},
+		"Cache-Control":   []string{"max-age=0"},
+		"Origin":          []string{"https://www.flightradar24.com"},
+		"Referer":         []string{"https://www.flightradar24.com/"},
+		"Sec-Fetch-Dest":  []string{"empty"},
+		"Sec-Fetch-Mode":  []string{"cors"},
+		"Sec-Fetch-Site":  []string{"same-site"},
+		"User-Agent":      []string{"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"},
+		"Accept":          []string{"application/json"},
+	}
+
+	ImageHeaders http.Header = http.Header{
+		"Accept-Encoding": []string{"gzip, br"},
+		"Accept-Language": []string{"pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"},
+		"Cache-Control":   []string{"max-age=0"},
+		"Origin":          []string{"https://www.flightradar24.com"},
+		"Referer":         []string{"https://www.flightradar24.com/"},
+		"Sec-Fetch-Dest":  []string{"empty"},
+		"Sec-Fetch-Mode":  []string{"cors"},
+		"Sec-Fetch-Site":  []string{"same-site"},
+		"User-Agent":      []string{"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"},
+		"Accept":          []string{"image/gif, image/jpg, image/jpeg, image/png"},
+	}
+)
