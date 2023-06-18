@@ -69,6 +69,10 @@ func (r *APIRequest) SendRequest() (*APIRequest, error) {
 	return r, err
 }
 
+func (r *APIRequest) GetStatusCode() int {
+	return r.response.StatusCode
+}
+
 func (r *APIRequest) GetContent() (interface{}, error) {
 	content, err := r.getResponseContent()
 	if err != nil {

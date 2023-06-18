@@ -1,8 +1,10 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 
 	"github.com/convitnhodev/flight-radar-go-sdk/core"
@@ -122,4 +124,27 @@ func (api *FlightRadar24API) GetZones() (map[string]interface{}, error) {
 func (api *FlightRadar24API) GetRealTimeFlightTrackerConfig() map[string]string {
 	result := api.realTimeFlightTrackerConfig
 	return result
+}
+
+func (api *FlightRadar24API) GetCountryFlag(country string) (string, error) {
+	flagUrl := core.CountryFlagURL
+	formattedCountry := strings.ReplaceAll(strings.ToLower(country), " ", "-")
+	formattedFlagUrl := strings.ReplaceAll(flagUrl, "{}", formattedCountry)
+
+	headers := core.ImageHeaders
+	if _, ok := headers["Origin"]; ok {
+		headers.Del("Origin")
+	}
+
+	req, err := request.NewAPIRequest(formattedFlagUrl, nil, headers, nil).SendRequest()
+	if err != nil {
+		return "", err
+	}
+
+	statusCode := req.GetStatusCode()
+	if !strings.HasPrefix(strconv.Itoa(statusCode), "4") {
+		return formattedFlagUrl, nil
+	}
+	return "", errors.New("invalid country flag")
+
 }

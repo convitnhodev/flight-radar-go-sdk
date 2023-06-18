@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"testing"
 )
 
@@ -14,6 +15,12 @@ type getZonesTest struct {
 	expectedVersion float64
 }
 
+type getCountryFlagTest struct {
+	country string
+	urlFlag string
+	err     error
+}
+
 var loginTests = []loginTest{
 	{"random", "random", "fail"},
 	// {"", "", "success"}, // TODO: add user and password to test login
@@ -21,6 +28,12 @@ var loginTests = []loginTest{
 
 var getzonesTests = []getZonesTest{
 	{4},
+}
+
+var getCountryFlagTests = []getCountryFlagTest{
+	{"Korea", "https://www.flightradar24.com/static/images/data/flags-small/korea.svg", nil},
+	{"China", "https://www.flightradar24.com/static/images/data/flags-small/china.svg", nil},
+	{"xxx", "", errors.New("invalid country flag")},
 }
 
 var test_api = NewFlightRadar24API()
@@ -58,6 +71,20 @@ func TestGetZones(t *testing.T) {
 		} else {
 			if content["version"] != test.expectedVersion {
 				t.Errorf("Getzones version = %v; expected %v ", content["version"], test.expectedVersion)
+			}
+		}
+	}
+}
+
+func TestGetCountryFlag(t *testing.T) {
+	for _, test := range getCountryFlagTests {
+		if result, err := test_api.GetCountryFlag(test.country); err != nil {
+			if err.Error() != test.err.Error() {
+				t.Errorf("GetCountryFlag return error: %v; expected %v", err, test.err)
+			}
+		} else {
+			if result != test.urlFlag {
+				t.Errorf("GetCountryFlag return value: %v, expected %v", result, test.urlFlag)
 			}
 		}
 	}
