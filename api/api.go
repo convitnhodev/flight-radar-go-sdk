@@ -117,5 +117,9 @@ func (api *FlightRadar24API) GetZones() (map[string]interface{}, error) {
 	}
 
 	return result, nil
+}
 
+func (api *FlightRadar24API) GetRealTimeFlightTrackerConfig() map[string]string {
+	result := api.realTimeFlightTrackerConfig
+	return result
 }
