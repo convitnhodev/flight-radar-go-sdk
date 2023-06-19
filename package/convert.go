@@ -2,6 +2,7 @@ package _package
 
 import (
 	"fmt"
+	"golang.org/x/net/html"
 	"strconv"
 	"time"
 )
@@ -42,4 +43,17 @@ func ConvertTimeToTimeWithAmAndPm(timeString string, date time.Time) (*time.Time
 		return nil, err
 	}
 	return &t, nil
+}
+
+func extractText(n *html.Node) string {
+	if n.Type == html.TextNode {
+		return n.Data
+	}
+
+	var result string
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		result += extractText(c)
+	}
+
+	return result
 }

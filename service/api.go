@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/convitnhodev/flight-radar-go-sdk/package/html_package"
 	"io"
 	"net/url"
 	"strconv"
@@ -333,5 +334,25 @@ func (api *FlightRadar24API) GetFlightsByFlightNo(flightNo string, limit int) (i
 	}
 
 	return content, nil
+
+}
+
+func (api *FlightRadar24API) GetAllFlightWithKey(keySearch string) ([]models.CoreFlight, error) {
+	url := component.FlightSearchALLUrl
+	url = strings.ReplaceAll(url, "{}", keySearch)
+	req, err := transport.NewAPIRequest(url, nil, component.Headers, nil).SendRequest()
+	if err != nil {
+		return nil, err
+	}
+
+	content, err := req.GetContent()
+	if err != nil {
+		return nil, fmt.Errorf("cannot get content: %s", err.Error())
+	}
+
+	result := string(content.([]uint8))
+	a := html_package.ConvertArrayRawModelToModel(html_package.GetHTML(result))
+	fmt.Println(a)
+	return html_package.ConvertArrayRawModelToModel(html_package.GetHTML(result)), nil
 
 }
