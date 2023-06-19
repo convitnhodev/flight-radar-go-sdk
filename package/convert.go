@@ -3,6 +3,7 @@ package _package
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 func IsNumeric(s string) bool {
@@ -19,4 +20,26 @@ func ConvertToString(value interface{}) string {
 	default:
 		return fmt.Sprintf("%v", v)
 	}
+}
+
+func ConvertStringToTime(timeString string) (*time.Time, error) {
+	layout := "02 Jan 2006"
+	t, err := time.Parse(layout, timeString)
+	if err != nil {
+		fmt.Println("Error when connvert time:", err)
+		return nil, err
+	}
+	return &t, nil
+}
+
+func ConvertTimeToTimeWithAmAndPm(timeString string, date time.Time) (*time.Time, error) {
+	dateString := date.Format("2006-01-02")
+	layout := "03:04 PM"
+	fullTimeString := dateString + " " + timeString
+
+	t, err := time.Parse(layout, fullTimeString)
+	if err != nil {
+		return nil, err
+	}
+	return &t, nil
 }

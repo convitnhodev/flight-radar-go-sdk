@@ -35,6 +35,9 @@ var (
 	AirlineLogoURL            string = CDNFlightradarBaseURL + "/assets/airlines/logotypes/{}_{}.png"
 	AlternativeAirlineLogoURL string = FlightradarBaseURL + "/static/images/data/operators/{}_logo0.png"
 
+	// Search
+	FlightSearchURL string = FlightradarBaseURL + "/v1/search/web/find?query={}&limit={2}"
+
 	Headers http.Header = http.Header{
 		"Accept-Encoding": []string{"gzip, br"},
 		"Accept-Language": []string{"pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7"},

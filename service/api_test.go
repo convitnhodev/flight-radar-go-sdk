@@ -52,12 +52,13 @@ var getAirport = []string{
 }
 
 var getFlight = []string{
-	"30c38acf",
-	"30c3b690",
-	"30c41921",
-	"30c4355f",
-	"306cca05",
-	"30c13531",
+	//"30c38acf",
+	//"30c3b690",
+	//"30c41921",
+	//"30c4355f",
+	//"306cca05",
+	//"30c13531",
+	"30c6f527",
 }
 
 var test_api = NewFlightRadar24API()

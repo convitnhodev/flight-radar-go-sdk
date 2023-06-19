@@ -196,7 +196,6 @@ func (api *FlightRadar24API) GetZones() (map[string]interface{}, error) {
 	if !ok {
 		return nil, fmt.Errorf("unexpected content type")
 	}
-
 	return result, nil
 }
 
@@ -315,4 +314,24 @@ func (api *FlightRadar24API) GetFlights(airline *string, bounds *string, registr
 	}
 
 	return flights, nil
+}
+
+func (api *FlightRadar24API) GetFlightsByFlightNo(flightNo string, limit int) (interface{}, error) {
+	url := component.FlightSearchURL
+	url = strings.ReplaceAll(url, "{}", flightNo)
+	url = strings.ReplaceAll(url, "{2}", _package.ConvertToString(limit))
+
+	req, err := transport.NewAPIRequest(url, nil, component.JSONHeaders, nil).SendRequest()
+
+	if err != nil {
+		return nil, err
+	}
+
+	content, err := req.GetContent()
+	if err != nil {
+		return nil, fmt.Errorf("cannot get content: %s", err.Error())
+	}
+
+	return content, nil
+
 }
