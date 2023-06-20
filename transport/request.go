@@ -20,6 +20,7 @@ type APIRequest struct {
 	headers  http.Header
 	data     map[string]io.Reader
 	response *http.Response
+	cookies  []*http.Cookie
 }
 
 func NewAPIRequest(url string, params url.Values, headers http.Header, data map[string]io.Reader) *APIRequest {
@@ -56,6 +57,12 @@ func (r *APIRequest) SendRequest() (*APIRequest, error) {
 		}
 		req.Header = r.headers
 		req.Header.Set("Content-Type", contentType)
+	}
+
+	if r.cookies != nil {
+		for _, c := range r.cookies {
+			req.AddCookie(c)
+		}
 	}
 
 	client := &http.Client{}
@@ -99,6 +106,15 @@ func (r *APIRequest) GetCookie(cookie string) (*http.Cookie, error) {
 
 	// Return an error if the cookie is not found
 	return nil, fmt.Errorf("cookie not found: %s", cookie)
+}
+
+func (r *APIRequest) GetCookies() []*http.Cookie {
+	return r.response.Cookies()
+}
+
+func (r *APIRequest) AddCookies(cookies []*http.Cookie) *APIRequest {
+	r.cookies = cookies
+	return r
 }
 
 func prepareForm(values map[string]io.Reader) (*bytes.Buffer, string, error) {

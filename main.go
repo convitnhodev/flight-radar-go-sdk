@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
-	api_ "github.com/convitnhodev/flight-radar-go-sdk/service"
+
+	"github.com/convitnhodev/flight-radar-go-sdk/service"
 )
 
 func main() {
-	api := api_.NewFlightRadar24API()
-	api.Login(`admin@tenxtenx.com `, `e9Lc5r7_tCUS!U5`)
+	api := service.NewFlightRadar24API()
+	api.Login(``, ``) // TODO: add user and password to test login
 	tmp, _ := api.GetAllFlightWithKey("vn321")
-	fmt.Println(tmp)
+	fmt.Println(service.PrettyPrint(tmp))
+	fmt.Printf("Total: %d\n", len(tmp))
 
 }

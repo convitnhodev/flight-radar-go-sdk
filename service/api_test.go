@@ -1,15 +1,9 @@
 package service
 
 import (
-	"encoding/json"
 	"errors"
 	"testing"
 )
-
-func prettyPrint(i interface{}) string {
-	s, _ := json.MarshalIndent(i, "", "\t")
-	return string(s)
-}
 
 type loginTest struct {
 	user           string
@@ -84,7 +78,7 @@ func TestGetAirlines(t *testing.T) {
 		if len(content) == 0 {
 			t.Errorf("GetAirlines() = %s", "empty")
 		}
-		t.Logf("GetAirlines() = %v", prettyPrint(content)) // TOD
+		t.Logf("GetAirlines() = %v", PrettyPrint(content)) // TOD
 	}
 }
 
@@ -95,7 +89,7 @@ func TestGetAirports(t *testing.T) {
 		if len(content) == 0 {
 			t.Errorf("GetAirports() = %s", "empty")
 		}
-		t.Logf("GetAirports() = %v", prettyPrint(content)) // TOD
+		t.Logf("GetAirports() = %v", PrettyPrint(content)) // TOD
 	}
 }
 
@@ -107,7 +101,7 @@ func TestGetAirport(t *testing.T) {
 			if len(content) == 0 {
 				t.Errorf("GetAirport() = %s", "empty")
 			}
-			t.Logf("GetAirport() = %v", prettyPrint(content)) // TOD
+			t.Logf("GetAirport() = %v", PrettyPrint(content)) // TOD
 		}
 	}
 
@@ -148,7 +142,7 @@ func TestGetFlights(t *testing.T) {
 		if len(content) == 0 {
 			t.Errorf("GetFlights() = %s", "empty")
 		}
-		t.Logf("GetFlights() = %v", prettyPrint(content)) // TODO: remove
+		t.Logf("GetFlights() = %v", PrettyPrint(content)) // TODO: remove
 	}
 }
 
@@ -160,7 +154,24 @@ func TestGetFlight(t *testing.T) {
 			if content == nil {
 				t.Errorf("GetDetailFlight() = %s", "empty")
 			}
-			t.Logf("GetDetailFlight() = %v", prettyPrint(content)) // TOD
+			t.Logf("GetDetailFlight() = %v", PrettyPrint(content)) // TOD
 		}
+	}
+}
+
+func TestGetAllFlightWithKey(t *testing.T) {
+	test_api.Login(``, ``) // TODO: add user and password to test login
+	test := "vn321"
+	if content, err := test_api.GetAllFlightWithKey(test); err != nil {
+		t.Errorf("GetAllFlightWithKey() = %s", err.Error())
+	} else {
+		if content == nil {
+			t.Errorf("GetAllFlightWithKey() = %s", "empty")
+		}
+		if len(content) < 90 {
+			t.Errorf("GetAllFlightWithKey() = %s", "< 90")
+		}
+		t.Logf("%v\n", PrettyPrint(content)) // TOD
+		t.Logf("Total: %d\n", len(content))
 	}
 }

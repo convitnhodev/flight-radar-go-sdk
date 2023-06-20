@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/convitnhodev/flight-radar-go-sdk/package/html_package"
 	"io"
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/convitnhodev/flight-radar-go-sdk/package/html_package"
 
 	"github.com/convitnhodev/flight-radar-go-sdk/models"
 	_package "github.com/convitnhodev/flight-radar-go-sdk/package"
@@ -19,6 +21,7 @@ import (
 
 type FlightRadar24API struct {
 	realTimeFlightTrackerConfig map[string]string
+	cookies                     []*http.Cookie
 }
 
 func NewFlightRadar24API() *FlightRadar24API {
@@ -79,6 +82,9 @@ func (api *FlightRadar24API) Login(user, password string) (map[string]interface{
 		return result, fmt.Errorf("cannot get cookie: %s", err.Error())
 	}
 	api.realTimeFlightTrackerConfig["enc"] = cookie.Value
+
+	cookies := req.GetCookies()
+	api.cookies = cookies
 
 	return result, nil
 }
@@ -340,7 +346,7 @@ func (api *FlightRadar24API) GetFlightsByFlightNo(flightNo string, limit int) (i
 func (api *FlightRadar24API) GetAllFlightWithKey(keySearch string) ([]models.CoreFlight, error) {
 	url := component.FlightSearchALLUrl
 	url = strings.ReplaceAll(url, "{}", keySearch)
-	req, err := transport.NewAPIRequest(url, nil, component.Headers, nil).SendRequest()
+	req, err := transport.NewAPIRequest(url, nil, component.Headers, nil).AddCookies(api.cookies).SendRequest()
 	if err != nil {
 		return nil, err
 	}
@@ -352,7 +358,11 @@ func (api *FlightRadar24API) GetAllFlightWithKey(keySearch string) ([]models.Cor
 
 	result := string(content.([]uint8))
 	a := html_package.ConvertArrayRawModelToModel(html_package.GetHTML(result))
-	fmt.Println(a)
-	return html_package.ConvertArrayRawModelToModel(html_package.GetHTML(result)), nil
+	return a, nil
 
+}
+
+func PrettyPrint(i interface{}) string {
+	s, _ := json.MarshalIndent(i, "", "\t")
+	return string(s)
 }
