@@ -50,6 +50,10 @@ func NewCustomFlightRadar24API(config map[string]string) *FlightRadar24API {
 	}
 }
 
+func (api *FlightRadar24API) GetCookies() []*http.Cookie {
+	return api.cookies
+}
+
 func (api *FlightRadar24API) Login(user, password string) (map[string]interface{}, error) {
 	payload := map[string]io.Reader{
 		"email":    strings.NewReader(user),
