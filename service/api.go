@@ -54,6 +54,17 @@ func (api *FlightRadar24API) GetCookies() []*http.Cookie {
 	return api.cookies
 }
 
+func (api *FlightRadar24API) SetCokkies(ck []*http.Cookie) {
+	api.cookies = ck
+	for _, c := range ck {
+		if c.Name == "_frPl" {
+			api.realTimeFlightTrackerConfig["enc"] = c.Value
+			break
+
+		}
+	}
+}
+
 func (api *FlightRadar24API) Login(user, password string) (map[string]interface{}, error) {
 	payload := map[string]io.Reader{
 		"email":    strings.NewReader(user),
