@@ -39,7 +39,7 @@ func NewFlightRadar24API() *FlightRadar24API {
 			"maxage":    "14400",
 			"gliders":   "1",
 			"stats":     "1",
-			"limit":     "10", // TODO: change limit to 5000
+			"limit":     "5000", // TODO: change limit to 5000
 		},
 	}
 }
@@ -60,7 +60,6 @@ func (api *FlightRadar24API) SetCokkies(ck []*http.Cookie) {
 		if c.Name == "_frPl" {
 			api.realTimeFlightTrackerConfig["enc"] = c.Value
 			break
-
 		}
 	}
 }

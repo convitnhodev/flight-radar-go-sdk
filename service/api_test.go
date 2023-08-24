@@ -136,7 +136,8 @@ func TestGetCountryFlag(t *testing.T) {
 }
 
 func TestGetFlights(t *testing.T) {
-	if content, err := test_api.GetFlights(nil, nil, nil, nil); err != nil {
+	s := "HVN"
+	if content, err := test_api.GetFlights(&s, nil, nil, nil); err != nil {
 		t.Errorf("GetFlights() = %s", err.Error())
 	} else {
 		if len(content) == 0 {
